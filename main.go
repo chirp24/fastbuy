@@ -14,7 +14,7 @@ import (
 
 var ext = g.NewExt(g.ExtInfo{
 	Title:       "fastbuy",
-	Description: "My ext to buy furni faster",
+	Description: "An extension to purchase items in bulk from the store.",
 	Author:      "chirp",
 	Version:     "1.0",
 })
