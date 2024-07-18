@@ -30,7 +30,8 @@ func main() {
 	ext.Initialized(onInitialized)
 	ext.Connected(onConnected)
 	ext.Disconnected(onDisconnected)
-	ext.Intercept(in.CHAT, in.CHAT_2, in.CHAT_3).With(handleChat)
+	ext.Intercept(out.CHAT).With(fm.handleChat)
+	ext.Intercept(out.SHOUT).With(fm.handleChat)
 	ext.Intercept(out.PURCHASE_FROM_CATALOG).With(func(e *g.Intercept) {
 		packet0 = e.Packet.Copy()
 		log.Println(packet0)
