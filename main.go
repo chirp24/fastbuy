@@ -16,7 +16,7 @@ var ext = g.NewExt(g.ExtInfo{
 	Title:       "fastbuy",
 	Description: "An extension to purchase items in bulk from the store.",
 	Author:      "chirp",
-	Version:     "1.0",
+	Version:     "1.1",
 })
 
 var packet0 *g.Packet
@@ -58,7 +58,7 @@ func onDisconnected() {
 func handleChat(e *g.Intercept) {
 	e.Packet.ReadInt() // skip entity index
 	message1 := e.Packet.ReadString()
-	if strings.Contains(message1, ":buy") { // :buy msg
+	if strings.Index(message1, ":buy") == 0 { // :buy msg
 		e.Block()
 		log.Println(message1)
 
@@ -72,25 +72,29 @@ func handleChat(e *g.Intercept) {
 		}
 		if a != 0 {
 			fmt.Println("Captured Integer:", a)
-			go buyitems(a)
+			go buyItems(a)
 		} else {
 			fmt.Println("No Integer found in the string.") // no int found in :buy command
+			showMsg("Failed to parse command; :buy <number>")
 		}
 	}
 }
 
-func buyitems(a int) {
+func buyItems(a int) {
 	buybool = true
 	defer func() {
 		buybool = false
 	}()
-	for i := 1; i <= a; i++ { // stop looping when reach variable a value
-		fmt.Println(i)
-		if packet0 != nil {
+	if packet0 != nil {
+		showMsg(fmt.Sprintf("Bulk purchasing %d times...", a))
+		for i := 1; i <= a; i++ { // stop looping when reach variable a value
+			fmt.Println(i)
 			ext.SendPacket(packet0) // repeat buy packet
 			time.Sleep(600 * time.Millisecond)
-		} else {
-			fmt.Println("No packet set to send.")
 		}
+		showMsg("Bulk purchase complete!")
+	} else {
+		fmt.Println("No packet set to send.")
+		showMsg("Purchase something before using the :buy command!")
 	}
 }
