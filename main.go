@@ -30,8 +30,7 @@ func main() {
 	ext.Initialized(onInitialized)
 	ext.Connected(onConnected)
 	ext.Disconnected(onDisconnected)
-	ext.Intercept(out.CHAT).With(fm.handleChat)
-	ext.Intercept(out.SHOUT).With(fm.handleChat)
+	ext.Intercept(out.CHAT, out.SHOUT).With(handleChat)
 	ext.Intercept(out.PURCHASE_FROM_CATALOG).With(func(e *g.Intercept) {
 		packet0 = e.Packet.Copy()
 		log.Println(packet0)
@@ -57,7 +56,6 @@ func onDisconnected() {
 }
 
 func handleChat(e *g.Intercept) {
-	e.Packet.ReadInt() // skip entity index
 	message1 := e.Packet.ReadString()
 	if strings.Index(message1, ":buy") == 0 { // :buy msg
 		e.Block()
